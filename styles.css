@@ -181,7 +181,8 @@ button { -webkit-tap-highlight-color: transparent; }
 .game-header { min-height: 54px; display: flex; align-items: center; justify-content: center; position: relative; }
 .session-badge { display: inline-flex; align-items: center; gap: 12px; padding: 9px 17px; border: 1px solid rgba(198,161,255,.28); border-radius: 999px; background: rgba(24,12,42,.54); box-shadow: inset 0 1px rgba(255,255,255,.12), 0 6px 20px rgba(11,4,24,.25); backdrop-filter: blur(10px); color: #eadbff; font-weight: 800; }
 .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--coral); box-shadow: 0 0 8px var(--coral); }
-.icon-actions { position: absolute; right: 0; display: flex; gap: 8px; }
+.icon-actions { display: flex; gap: 8px; }
+.global-actions { position: fixed; z-index: 6; top: max(12px, env(safe-area-inset-top)); right: max(20px, env(safe-area-inset-right)); }
 .icon-button { width: 50px; height: 50px; padding: 0; display: inline-grid; place-items: center; border: 1px solid rgba(255,245,236,.2); border-radius: 15px; color: var(--cream); background: linear-gradient(145deg, rgba(53,27,70,.68), rgba(20,14,40,.72)); box-shadow: inset 0 1px rgba(255,255,255,.12), 0 6px 18px rgba(7,3,18,.24); cursor: pointer; transition: transform .16s ease, opacity .16s ease, border-color .16s ease; }
 .icon-button:hover { transform: translateY(-2px); border-color: rgba(242,174,85,.55); }
 .icon-button svg { width: 25px; height: 25px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
@@ -313,7 +314,6 @@ button { -webkit-tap-highlight-color: transparent; }
   .list-grid { grid-template-columns: repeat(2, 1fr); gap: 9px; }
   .list-card { min-height: 67px; }
   .list-heading { align-items: center; }
-  .icon-actions { position: static; }
   .game-header { justify-content: space-between; }
   .session-badge { gap: 8px; padding: 8px 12px; font-size: .88rem; }
   .icon-button { width: 46px; height: 46px; border-radius: 13px; }
@@ -333,6 +333,7 @@ button { -webkit-tap-highlight-color: transparent; }
 }
 
 @media (max-width: 480px) {
+  .start-screen { padding-top: 28px; }
   .brand-lockup h1 { font-size: clamp(2.25rem, 12vw, 3.2rem); }
   .list-heading { align-items: flex-start; flex-direction: column; gap: 11px; }
   .order-control { align-self: stretch; }
@@ -341,7 +342,7 @@ button { -webkit-tap-highlight-color: transparent; }
   .start-actions { align-items: stretch; }
   .start-actions .button { flex: 1; min-width: 0; padding-inline: 12px; }
   .game-header { align-items: flex-start; }
-  .icon-actions { gap: 5px; }
+  .global-actions { top: max(4px, env(safe-area-inset-top)); right: max(10px, env(safe-area-inset-right)); gap: 5px; }
   .icon-button { width: 43px; height: 43px; }
   .session-badge { min-height: 43px; }
   .instruction-block h1 { font-size: 1.04rem; }

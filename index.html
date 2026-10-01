@@ -17,6 +17,18 @@
   </div>
 
   <main class="app-shell">
+    <div class="icon-actions global-actions" aria-label="Game controls">
+      <button id="home-button" class="icon-button" type="button" aria-label="Home" title="Home">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/></svg>
+      </button>
+      <button id="effects-button" class="icon-button" type="button" aria-label="Sound effects on" aria-pressed="true" title="Sound effects: decorative only. Letter sounds stay on.">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M11 5 6.5 9H3v6h3.5l4.5 4V5Z"/><path class="sound-wave" d="M15 9a4 4 0 0 1 0 6M18 6a8 8 0 0 1 0 12"/></svg>
+      </button>
+      <button id="fullscreen-button" class="icon-button" type="button" aria-label="Full screen" title="Full screen">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5"/></svg>
+      </button>
+    </div>
+
     <section id="start-screen" class="screen start-screen active" aria-labelledby="start-title">
       <div class="brand-lockup">
         <span class="eyebrow">A little garden of sounds</span>
@@ -56,17 +68,6 @@
           <span id="game-title">List 1</span>
           <span class="dot" aria-hidden="true"></span>
           <span id="word-counter">1 / 8</span>
-        </div>
-        <div class="icon-actions">
-          <button id="home-button" class="icon-button" type="button" aria-label="Home" title="Home">
-            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/></svg>
-          </button>
-          <button id="effects-button" class="icon-button" type="button" aria-label="Sound effects on" aria-pressed="true" title="Sound effects: decorative only. Letter sounds stay on.">
-            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M11 5 6.5 9H3v6h3.5l4.5 4V5Z"/><path class="sound-wave" d="M15 9a4 4 0 0 1 0 6M18 6a8 8 0 0 1 0 12"/></svg>
-          </button>
-          <button id="fullscreen-button" class="icon-button" type="button" aria-label="Full screen" title="Full screen">
-            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5"/></svg>
-          </button>
         </div>
       </header>
 
