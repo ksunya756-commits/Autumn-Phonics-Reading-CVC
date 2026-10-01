@@ -119,6 +119,7 @@ button { -webkit-tap-highlight-color: transparent; }
 .student-heading { margin-bottom: 10px; }
 .student-heading strong { display: block; color: var(--cream); font-size: .96rem; }
 .student-controls { display: grid; grid-template-columns: minmax(190px, .8fr) minmax(280px, 1.2fr); gap: 10px; }
+.student-select-row { display: grid; grid-template-columns: minmax(0, 1fr) 48px; gap: 8px; }
 .student-controls select, .student-create input { width: 100%; min-height: 48px; border: 1px solid rgba(255,245,236,.2); border-radius: 13px; color: var(--cream); background: rgba(29,16,48,.88); outline: none; }
 .student-controls select { padding: 9px 38px 9px 13px; cursor: pointer; }
 .student-controls select option { color: #21122f; background: #fff5ec; }
@@ -126,7 +127,10 @@ button { -webkit-tap-highlight-color: transparent; }
 .student-create input { padding: 9px 13px; }
 .student-create input::placeholder { color: rgba(223,207,230,.65); }
 .student-add-button { min-width: 72px; min-height: 48px; padding: 8px 15px; border: 1px solid rgba(150,238,225,.38); border-radius: 13px; color: var(--cream); font-weight: 800; background: linear-gradient(180deg, rgba(62,104,108,.8), rgba(30,49,72,.9)); cursor: pointer; }
-.student-controls select:focus-visible, .student-create input:focus-visible, .student-add-button:focus-visible { outline: 3px solid var(--mint); outline-offset: 2px; }
+.student-delete-button { width: 48px; height: 48px; padding: 0; display: grid; place-items: center; border: 1px solid rgba(255,118,92,.35); border-radius: 13px; color: #ffd4cb; background: linear-gradient(180deg, rgba(112,47,64,.74), rgba(48,24,49,.9)); cursor: pointer; }
+.student-delete-button:disabled { opacity: .35; cursor: not-allowed; }
+.student-delete-button svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.student-controls select:focus-visible, .student-create input:focus-visible, .student-add-button:focus-visible, .student-delete-button:focus-visible { outline: 3px solid var(--mint); outline-offset: 2px; }
 .continue-session { width: 100%; min-height: 52px; margin-top: 10px; padding: 9px 14px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; border: 1px solid rgba(242,174,85,.58); border-radius: 14px; color: var(--cream); text-align: left; background: linear-gradient(135deg, rgba(139,58,66,.82), rgba(69,33,92,.88)); box-shadow: inset 0 1px rgba(255,255,255,.18), 0 0 20px rgba(255,118,92,.12); cursor: pointer; }
 .continue-session[hidden] { display: none; }
 .continue-session > span { color: #ffd6b8; font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; }

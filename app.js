@@ -16,6 +16,7 @@
     listGrid: document.querySelector('#list-grid'), startButton: document.querySelector('#start-button'), startStatus: document.querySelector('#start-status'),
     resetResults: document.querySelector('#reset-results-button'),
     studentSelect: document.querySelector('#student-select'), studentName: document.querySelector('#student-name-input'), addStudent: document.querySelector('#add-student-button'),
+    deleteStudent: document.querySelector('#delete-student-button'),
     studentTitle: document.querySelector('#student-title'), continueSession: document.querySelector('#continue-session-button'), continueDetail: document.querySelector('#continue-session-detail'),
     gameTitle: document.querySelector('#game-title'), wordCounter: document.querySelector('#word-counter'), letterRow: document.querySelector('#letter-row'),
     revealPrompt: document.querySelector('#reveal-prompt'), revealedWord: document.querySelector('#revealed-word'), readingFeedback: document.querySelector('#reading-feedback'), soundOut: document.querySelector('#sound-out-button'),
@@ -165,6 +166,7 @@
     elements.studentTitle.textContent = student ? `Reading as ${student.name}` : 'Choose a saved name or add a new one';
     elements.startButton.disabled = !student;
     elements.resetResults.disabled = !student;
+    elements.deleteStudent.disabled = !student;
     const canContinue = Boolean(student && validSession(session));
     elements.continueSession.hidden = !canContinue;
     if (canContinue) {
@@ -216,6 +218,30 @@
     elements.studentName.value = '';
     selectStudent(id, { announce: false });
     setStatus(elements.startStatus, `${name} added. Choose a list and start reading.`);
+  }
+
+  function deleteStudent() {
+    const student = activeStudent();
+    if (!student) return;
+    if (!window.confirm(`Delete ${student.name} and all saved results?`)) return;
+    const deletedName = student.name;
+    audioLoadGeneration += 1;
+    audioReady = false;
+    audio.cancel();
+    stopRecognition();
+    state.students = state.students.filter((item) => item.id !== student.id);
+    state.activeStudentId = state.students[0]?.id || null;
+    loadActiveStudentData();
+    state.atHome = true;
+    if (session) {
+      selectedListId = session.listId;
+      selectedOrder = session.order;
+    }
+    saveState();
+    renderStudentControls();
+    renderListGrid();
+    setOrder(selectedOrder);
+    setStatus(elements.startStatus, `${deletedName} was deleted.`);
   }
 
   function setOrder(order) {
@@ -565,6 +591,7 @@
     elements.startButton.addEventListener('click', () => startNewSession()); elements.home.addEventListener('click', goHome); elements.soundOut.addEventListener('click', soundItOut);
     elements.studentSelect.addEventListener('change', () => selectStudent(elements.studentSelect.value));
     elements.addStudent.addEventListener('click', addStudent);
+    elements.deleteStudent.addEventListener('click', deleteStudent);
     elements.studentName.addEventListener('keydown', (event) => { if (event.key === 'Enter') { event.preventDefault(); addStudent(); } });
     elements.continueSession.addEventListener('click', continueSavedSession);
     elements.resetResults.addEventListener('click', resetResults);

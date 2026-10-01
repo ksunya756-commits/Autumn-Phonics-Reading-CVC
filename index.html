@@ -43,10 +43,15 @@
             <strong id="student-title">Choose a saved name or add a new one</strong>
           </div>
           <div class="student-controls">
-            <label class="sr-only" for="student-select">Saved students</label>
-            <select id="student-select" aria-label="Choose a saved student">
-              <option value="">Choose a student</option>
-            </select>
+            <div class="student-select-row">
+              <label class="sr-only" for="student-select">Saved students</label>
+              <select id="student-select" aria-label="Choose a saved student">
+                <option value="">Choose a student</option>
+              </select>
+              <button id="delete-student-button" class="student-delete-button" type="button" aria-label="Delete selected student" title="Delete selected student" disabled>
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></svg>
+              </button>
+            </div>
             <div class="student-create">
               <label class="sr-only" for="student-name-input">New student name</label>
               <input id="student-name-input" type="text" maxlength="30" autocomplete="name" placeholder="New student name">
