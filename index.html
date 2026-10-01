@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#190f2d">
+  <meta name="description" content="A teacher-led phonics game for blending three-letter words.">
+  <title>Autumn Sound Garden</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%23e9854b' d='M54 8C31 8 13 21 10 43c10 8 25 7 35-3C54 31 57 18 54 8Z'/%3E%3Cpath fill='none' stroke='%23fff5ec' stroke-width='4' stroke-linecap='round' d='M10 54c9-17 20-27 35-36'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="forest" aria-hidden="true"></div>
+  <div class="ambient" aria-hidden="true">
+    <i class="firefly f1"></i><i class="firefly f2"></i><i class="firefly f3"></i><i class="firefly f4"></i>
+    <i class="leaf l1"></i><i class="leaf l2"></i><i class="leaf l3"></i><i class="leaf l4"></i>
+  </div>
+
+  <main class="app-shell">
+    <section id="start-screen" class="screen start-screen active" aria-labelledby="start-title">
+      <div class="brand-lockup">
+        <span class="eyebrow">A little garden of sounds</span>
+        <h1 id="start-title">Autumn Sound Garden</h1>
+        <p class="tagline">Tap. Listen. Read.</p>
+      </div>
+
+      <div class="start-panel glass-panel">
+        <div class="list-heading">
+          <div>
+            <span class="step-label">Choose a path</span>
+            <h2>Word lists</h2>
+          </div>
+          <div class="order-control" aria-label="Word order">
+            <button class="order-option active" type="button" data-order="in-order" aria-pressed="true">In order</button>
+            <button class="order-option" type="button" data-order="mix" aria-pressed="false">Mix</button>
+          </div>
+        </div>
+        <div id="list-grid" class="list-grid" aria-label="Choose a word list"></div>
+        <div class="start-actions">
+          <button id="teacher-button" class="button button-quiet" type="button">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 5h16v11H7l-3 3V5Z"/><path d="M8 9h8M8 12h5"/></svg>
+            Teacher
+          </button>
+          <button id="start-button" class="button button-primary" type="button">
+            <span>Start</span>
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>
+          </button>
+        </div>
+        <div id="start-status" class="inline-status" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section id="game-screen" class="screen game-screen" aria-labelledby="game-title" hidden>
+      <header class="game-header">
+        <div class="session-badge">
+          <span id="game-title">List 1</span>
+          <span class="dot" aria-hidden="true"></span>
+          <span id="word-counter">1 / 8</span>
+        </div>
+        <div class="icon-actions">
+          <button id="home-button" class="icon-button" type="button" aria-label="Home" title="Home">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/></svg>
+          </button>
+          <button id="effects-button" class="icon-button" type="button" aria-label="Sound effects on" aria-pressed="true" title="Sound effects: decorative only. Letter sounds stay on.">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M11 5 6.5 9H3v6h3.5l4.5 4V5Z"/><path class="sound-wave" d="M15 9a4 4 0 0 1 0 6M18 6a8 8 0 0 1 0 12"/></svg>
+          </button>
+          <button id="fullscreen-button" class="icon-button" type="button" aria-label="Full screen" title="Full screen">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="game-content">
+        <div class="instruction-block">
+          <span class="eyebrow">Listen closely</span>
+          <h1>Tap each letter. Listen to the sounds.</h1>
+        </div>
+
+        <div id="letter-row" class="letter-row" aria-label="Word sounds"></div>
+
+        <div class="read-reveal" aria-live="polite">
+          <div id="reading-feedback" class="reading-feedback" hidden>
+            <svg class="success-star" aria-hidden="true" viewBox="0 0 64 64"><path d="m32 5 7.8 15.8 17.5 2.5-12.7 12.4 3 17.4L32 44.9 16.4 53l3-17.4L6.7 23.3l17.5-2.5L32 5Z"/></svg>
+            <span>Great reading!</span>
+          </div>
+          <span id="reveal-prompt">&nbsp;</span>
+          <strong id="revealed-word" aria-hidden="true">&nbsp;</strong>
+        </div>
+
+        <div class="game-controls">
+          <button id="sound-out-button" class="button button-warm" type="button">Sound it out</button>
+          <button id="read-button" class="button button-violet button-microphone" type="button" title="Read the word into the microphone" aria-pressed="false">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg>
+            <span>Read aloud</span>
+          </button>
+          <button id="next-button" class="button button-primary" type="button" disabled title="Read the word aloud first">Next</button>
+        </div>
+        <button id="back-button" class="back-button" type="button">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg>
+          Previous word
+        </button>
+        <div id="game-status" class="inline-status game-status" role="status" aria-live="polite"></div>
+        <button id="retry-audio-button" class="button button-quiet retry-button" type="button" hidden>Repeat loading</button>
+      </div>
+      <div id="celebration" class="celebration" aria-hidden="true"></div>
+    </section>
+
+    <section id="complete-screen" class="screen complete-screen" aria-labelledby="complete-title" hidden>
+      <div class="completion-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
+      <span class="eyebrow">The path is complete</span>
+      <h1 id="complete-title">Well done!</h1>
+      <p><strong>8</strong> words read</p>
+      <div class="completion-actions">
+        <button id="again-button" class="button button-primary" type="button">Read again</button>
+        <button id="choose-button" class="button button-quiet" type="button">Choose a list</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a class="author-link" href="https://vk.ru/speaky_swan" target="_blank" rel="noopener noreferrer" aria-label="Speaky Swan on VK — opens in a new tab">Speaky Swan · @speaky_swan</a>
+  </footer>
+
+  <dialog id="teacher-dialog" class="teacher-dialog" aria-labelledby="teacher-title">
+    <div class="dialog-head">
+      <div><span class="eyebrow">For the grown-up</span><h2 id="teacher-title">Teacher sound check</h2></div>
+      <button id="close-teacher" class="icon-button" type="button" aria-label="Close teacher panel">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19"/></svg>
+      </button>
+    </div>
+    <p class="teacher-intro">Listen to the supplied British phonics clips. This technical player does not assess pronunciation.</p>
+    <div class="teacher-settings">
+      <label for="volume-range"><span>Phoneme volume</span><output id="volume-output">90%</output></label>
+      <input id="volume-range" type="range" min="0" max="100" value="90">
+      <label for="gap-range"><span>Gap between sounds</span><output id="gap-output">100 ms</output></label>
+      <input id="gap-range" type="range" min="80" max="200" step="10" value="100">
+    </div>
+    <div id="teacher-sounds" class="teacher-sounds" aria-label="Phoneme sound checks"></div>
+    <div id="teacher-status" class="inline-status" role="status" aria-live="polite"></div>
+    <a class="author-link teacher-author" href="https://vk.ru/speaky_swan" target="_blank" rel="noopener noreferrer" aria-label="Speaky Swan on VK — opens in a new tab">Speaky Swan · @speaky_swan</a>
+  </dialog>
+
+  <script src="words.js"></script>
+  <script src="audio.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
+

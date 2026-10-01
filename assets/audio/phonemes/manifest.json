@@ -1,0 +1,120 @@
+{
+  "version": 1,
+  "source": "https://github.com/hellodeborahuk/buzzphonics",
+  "license": "MIT",
+  "copyright": "2022 Debbie Dann",
+  "sounds": [
+    {
+      "key": "a",
+      "filename": "a.m4a",
+      "mime": "audio/mp4",
+      "phoneme": "/æ/",
+      "source": "https://raw.githubusercontent.com/hellodeborahuk/buzzphonics/main/public/sounds/a.m4a"
+    },
+    {
+      "key": "b",
+      "filename": "b.m4a",
+      "mime": "audio/mp4",
+      "phoneme": "/b/",
+      "source": "https://raw.githubusercontent.com/hellodeborahuk/buzzphonics/main/public/sounds/b.m4a"
+    },
+    {
+      "key": "d",
+      "filename": "d.m4a",
+      "mime": "audio/mp4",
+      "phoneme": "/d/",
+      "source": "https://raw.githubusercontent.com/hellodeborahuk/buzzphonics/main/public/sounds/d.m4a"
+    },
+    {
+      "key": "e",
+      "filename": "e.m4a",
+      "mime": "audio/mp4",
+      "phoneme": "/e/",
+      "source": "https://raw.githubusercontent.com/hellodeborahuk/buzzphonics/main/public/sounds/e.m4a"
+    },
+    {
+      "key": "f",
+      "filename": "f.m4a",
+      "mime": "audio/mp4",
+      "phoneme": "/f/",
+      "source": "https://raw.githubusercontent.com/hellodeborahuk/buzzphonics/main/public/sounds/f.m4a"
+    },
+    {
+      "key": "g",
+      "filename": "g.m4a",
+      "mime": "audio/mp4",
+      "phoneme": "/ɡ/",
+      "source": "https://raw.githubusercontent.com/hellodeborahuk/buzzphonics/main/public/sounds/g.m4a"
+    },
+    {
+      "key": "h",
+      "filename": "h.m4a",
+      "mime": "audio/mp4",
+      "phoneme": "/h/",
+      "source": "https://raw.githubusercontent.com/hellodeborahuk/buzzphonics/main/public/sounds/h.m4a"
+    },
+    {
+      "key": "i",
+      "filename": "i.m4a",
+      "mime": "audio/mp4",
+      "phoneme": "/ɪ/",
+      "source": "https://raw.githubusercontent.com/hellodeborahuk/buzzphonics/main/public/sounds/i.m4a"
+    },
+    {
+      "key": "j",
+      "filename": "j.m4a",
+      "mime": "audio/mp4",
+      "phoneme": "/dʒ/",
+      "source": "https://raw.githubusercontent.com/hellodeborahuk/buzzphonics/main/public/sounds/j.m4a"
+    },
+    {
+      "key": "k",
+      "filename": "k.m4a",
+      "mime": "audio/mp4",
+      "phoneme": "/k/",
+      "source": "https://raw.githubusercontent.com/hellodeborahuk/buzzphonics/main/public/sounds/c.m4a"
+    },
+    {
+      "key": "l",
+      "filename": "l.m4a",
+      "mime": "audio/mp4",
+      "phoneme": "/l/",
+      "source": "https://raw.githubusercontent.com/hellodeborahuk/buzzphonics/main/public/sounds/l.m4a"
+    },
+    {
+      "key": "m",
+      "filename": "m.m4a",
+      "mime": "audio/mp4",
+      "phoneme": "/m/",
+      "source": "https://raw.githubusercontent.com/hellodeborahuk/buzzphonics/main/public/sounds/m.m4a"
+    },
+    {
+      "key": "n",
+      "filename": "n.m4a",
+      "mime": "audio/mp4",
+      "phoneme": "/n/",
+      "source": "https://raw.githubusercontent.com/hellodeborahuk/buzzphonics/main/public/sounds/n.m4a"
+    },
+    {
+      "key": "o",
+      "filename": "o.m4a",
+      "mime": "audio/mp4",
+      "phoneme": "/ɒ/",
+      "source": "https://raw.githubusercontent.com/hellodeborahuk/buzzphonics/main/public/sounds/o.m4a"
+    },
+    {
+      "key": "p",
+      "filename": "p.m4a",
+      "mime": "audio/mp4",
+      "phoneme": "/p/",
+      "source": "https://raw.githubusercontent.com/hellodeborahuk/buzzphonics/main/public/sounds/p.m4a"
+    },
+    {
+      "key": "r",
+      "filename": "r.m4a",
+      "mime": "audio/mp4",
+      "phoneme": "/ɹ/",
+      "source": "https://raw.githubusercontent.com/hellodeborahuk/buzzphonics/main/public/sounds/r.m4a"
+    }
+  ]
+}

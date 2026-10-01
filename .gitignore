@@ -1,0 +1,11 @@
+# Local source bundle and duplicate working materials
+Autumn-Phonics-Audio.zip
+Autumn-Phonics-Codex.md
+images/
+Autumn Phonics/
+
+# Operating-system and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
