@@ -149,6 +149,7 @@ button { -webkit-tap-highlight-color: transparent; }
 .list-progress-track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--coral), var(--amber)); box-shadow: 0 0 8px var(--coral); }
 
 .start-actions { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-top: 20px; }
+.start-secondary-actions { display: flex; align-items: center; gap: 10px; }
 .button {
   min-height: 50px;
   padding: 11px 22px;
@@ -172,6 +173,7 @@ button { -webkit-tap-highlight-color: transparent; }
 .button:disabled { opacity: .38; cursor: not-allowed; filter: saturate(.6); }
 .button-primary { min-width: 150px; border-color: rgba(255,156,114,.8); background: linear-gradient(180deg, rgba(189,70,69,.96), rgba(91,31,67,.96)); box-shadow: inset 0 1px rgba(255,231,216,.4), inset 0 -5px rgba(59,14,44,.45), 0 0 0 2px rgba(255,118,92,.18), 0 8px 22px rgba(65,11,42,.42), 0 0 25px rgba(255,118,92,.2); }
 .button-quiet { background: linear-gradient(180deg, rgba(65,42,81,.84), rgba(29,20,51,.88)); }
+.button-reset { color: #f5d8d2; border-color: rgba(255,118,92,.28); }
 .button-warm { border-color: rgba(242,174,85,.72); background: linear-gradient(180deg, rgba(143,58,57,.93), rgba(70,25,58,.96)); box-shadow: inset 0 1px rgba(255,231,216,.35), inset 0 -5px rgba(47,14,41,.4), 0 0 0 2px rgba(233,133,75,.12), 0 7px 20px rgba(35,9,31,.35); }
 .button-violet { border-color: rgba(198,161,255,.72); background: linear-gradient(180deg, rgba(113,57,146,.94), rgba(54,28,87,.96)); box-shadow: inset 0 1px rgba(241,225,255,.35), inset 0 -5px rgba(31,14,58,.4), 0 0 0 2px rgba(198,161,255,.12), 0 7px 20px rgba(34,11,53,.35); }
 .inline-status { min-height: 20px; margin-top: 10px; color: #ffe1c9; font-size: .85rem; text-align: center; }
@@ -341,6 +343,9 @@ button { -webkit-tap-highlight-color: transparent; }
   .list-card { padding: 11px 12px; }
   .start-actions { align-items: stretch; }
   .start-actions .button { flex: 1; min-width: 0; padding-inline: 12px; }
+  .start-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .start-secondary-actions { display: contents; }
+  .start-actions #start-button { grid-column: 1 / -1; }
   .game-header { align-items: flex-start; }
   .global-actions { top: max(4px, env(safe-area-inset-top)); right: max(10px, env(safe-area-inset-right)); gap: 5px; }
   .icon-button { width: 43px; height: 43px; }

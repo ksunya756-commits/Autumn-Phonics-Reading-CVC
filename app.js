@@ -14,6 +14,7 @@
     screens: [...document.querySelectorAll('.screen')],
     start: document.querySelector('#start-screen'), game: document.querySelector('#game-screen'), complete: document.querySelector('#complete-screen'),
     listGrid: document.querySelector('#list-grid'), startButton: document.querySelector('#start-button'), startStatus: document.querySelector('#start-status'),
+    resetResults: document.querySelector('#reset-results-button'),
     gameTitle: document.querySelector('#game-title'), wordCounter: document.querySelector('#word-counter'), letterRow: document.querySelector('#letter-row'),
     revealPrompt: document.querySelector('#reveal-prompt'), revealedWord: document.querySelector('#revealed-word'), readingFeedback: document.querySelector('#reading-feedback'), soundOut: document.querySelector('#sound-out-button'),
     read: document.querySelector('#read-button'), next: document.querySelector('#next-button'), back: document.querySelector('#back-button'), home: document.querySelector('#home-button'),
@@ -96,6 +97,14 @@
     selectedOrder = order;
     document.querySelectorAll('.order-option').forEach((button) => { const active = button.dataset.order === order; button.classList.toggle('active', active); button.setAttribute('aria-pressed', String(active)); });
     saveState();
+  }
+
+  function resetResults() {
+    if (!window.confirm('Reset progress for all six lists?')) return;
+    WORD_LISTS.forEach((list) => { state.progress[list.id] = []; });
+    saveState();
+    renderListGrid();
+    setStatus(elements.startStatus, 'Results reset. All lists are ready to read again.');
   }
 
   function shuffle(items) {
@@ -391,6 +400,7 @@
   function bindEvents() {
     document.querySelectorAll('.order-option').forEach((button) => button.addEventListener('click', () => setOrder(button.dataset.order)));
     elements.startButton.addEventListener('click', () => startNewSession()); elements.home.addEventListener('click', goHome); elements.soundOut.addEventListener('click', soundItOut);
+    elements.resetResults.addEventListener('click', resetResults);
     elements.read.addEventListener('click', startReadingCheck); elements.next.addEventListener('click', nextWord); elements.back.addEventListener('click', previousWord);
     elements.retryAudio.addEventListener('click', retryAudio); elements.fullscreen.addEventListener('click', toggleFullscreen);
     elements.again.addEventListener('click', () => { selectedListId = state.selectedListId; startNewSession({ resetProgress: true }); }); elements.choose.addEventListener('click', goHome);
