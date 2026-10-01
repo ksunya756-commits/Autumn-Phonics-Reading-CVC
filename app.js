@@ -39,7 +39,7 @@
   let activeRecognition = null;
 
   function defaultState() {
-    return { selectedListId: 'list-1', order: 'in-order', progress: Object.fromEntries(WORD_LISTS.map((list) => [list.id, []])), session: null, volume: 0.9, gap: 100, effects: true };
+    return { selectedListId: 'list-1', order: 'in-order', progress: Object.fromEntries(WORD_LISTS.map((list) => [list.id, []])), session: null, volume: 0.9, gap: 300, effects: true };
   }
 
   function loadState() {
@@ -72,6 +72,7 @@
     return new Set((state.progress[listId] || []).filter((word) => allowed.has(word)));
   }
   function setStatus(element, text = '', isError = false) { element.textContent = text; element.classList.toggle('error', isError); }
+  function formatGap(milliseconds) { return `${(milliseconds / 1000).toFixed(1)} s`; }
 
   function showScreen(target) {
     audio.cancel(); stopRecognition(); clearPlaying();
@@ -173,9 +174,9 @@
   function positionElements(index) { const wrap = elements.letterRow.querySelector(`[data-index="${index}"]`); return { wrap, tile: wrap?.querySelector('.letter-tile') }; }
   function clearPlaying() { document.querySelectorAll('.playing').forEach((item) => item.classList.remove('playing')); }
 
-  function markHeard(index) {
+  function markHeard(index, announce = true) {
     listened[index] = true; positionElements(index).wrap?.classList.add('heard');
-    if (listened.every(Boolean)) setStatus(elements.gameStatus, 'All three sounds heard. Now read the word aloud.');
+    if (announce && listened.every(Boolean)) setStatus(elements.gameStatus, 'All three sounds heard. Now read the word aloud.');
   }
 
   async function playPosition(index) {
@@ -195,7 +196,7 @@
     setStatus(elements.gameStatus, 'Listen to each sound…');
     try {
       const completed = await audio.playSequence(items, state.gap, {
-        onStart: (item) => positionElements(item.index).tile?.classList.add('playing'), onComplete: (item) => markHeard(item.index),
+        onStart: (item) => positionElements(item.index).tile?.classList.add('playing'), onComplete: (item) => markHeard(item.index, false),
         onStop: (item) => positionElements(item.index).tile?.classList.remove('playing'), onSequenceComplete: () => setStatus(elements.gameStatus, 'All three sounds heard. Now read the word aloud.'),
       });
       if (!completed) clearPlaying();
@@ -393,7 +394,7 @@
 
   function initialiseSettings() {
     audio.setVolume(state.volume); elements.volume.value = String(Math.round(state.volume * 100)); elements.volumeOutput.value = `${Math.round(state.volume * 100)}%`;
-    elements.gap.value = String(state.gap); elements.gapOutput.value = `${state.gap} ms`;
+    elements.gap.value = String(state.gap); elements.gapOutput.value = formatGap(state.gap);
     elements.ambient.classList.toggle('muted', !state.effects); elements.effects.setAttribute('aria-pressed', String(state.effects)); elements.effects.setAttribute('aria-label', `Sound effects ${state.effects ? 'on' : 'off'}`);
   }
 
@@ -412,7 +413,7 @@
     elements.teacherDialog.addEventListener('cancel', (event) => { event.preventDefault(); closeTeacher(); });
     elements.teacherDialog.addEventListener('click', (event) => { if (event.target === elements.teacherDialog) closeTeacher(); });
     elements.volume.addEventListener('input', () => { state.volume = Number(elements.volume.value) / 100; audio.setVolume(state.volume); elements.volumeOutput.value = `${elements.volume.value}%`; saveState(); });
-    elements.gap.addEventListener('input', () => { state.gap = Number(elements.gap.value); elements.gapOutput.value = `${state.gap} ms`; saveState(); });
+    elements.gap.addEventListener('input', () => { state.gap = Number(elements.gap.value); elements.gapOutput.value = formatGap(state.gap); saveState(); });
     document.addEventListener('keydown', (event) => {
       if (elements.teacherDialog.open || elements.game.hidden) return;
       const tag = event.target?.tagName;
@@ -424,7 +425,7 @@
 
   function init() {
     state.volume = Number.isFinite(Number(state.volume)) ? Math.max(0, Math.min(1, Number(state.volume))) : 0.9;
-    state.gap = Number.isFinite(Number(state.gap)) ? Math.max(80, Math.min(200, Number(state.gap))) : 100;
+    state.gap = Number.isFinite(Number(state.gap)) ? Math.max(0, Math.min(2000, Number(state.gap))) : 300;
     state.effects = state.effects !== false;
     renderListGrid(); setOrder(selectedOrder); renderTeacherSounds(); initialiseSettings(); bindEvents();
     if (session) { selectedListId = session.listId; selectedOrder = session.order; showGame(); } else showScreen(elements.start);
