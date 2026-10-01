@@ -37,6 +37,29 @@
       </div>
 
       <div class="start-panel glass-panel">
+        <section class="student-panel" aria-labelledby="student-title">
+          <div class="student-heading">
+            <span class="step-label">Student</span>
+            <strong id="student-title">Choose a saved name or add a new one</strong>
+          </div>
+          <div class="student-controls">
+            <label class="sr-only" for="student-select">Saved students</label>
+            <select id="student-select" aria-label="Choose a saved student">
+              <option value="">Choose a student</option>
+            </select>
+            <div class="student-create">
+              <label class="sr-only" for="student-name-input">New student name</label>
+              <input id="student-name-input" type="text" maxlength="30" autocomplete="name" placeholder="New student name">
+              <button id="add-student-button" class="student-add-button" type="button">Add</button>
+            </div>
+          </div>
+          <button id="continue-session-button" class="continue-session" type="button" hidden>
+            <span>Continue</span>
+            <strong id="continue-session-detail"></strong>
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>
+          </button>
+        </section>
+
         <div class="list-heading">
           <div>
             <span class="step-label">Choose a path</span>
@@ -54,12 +77,12 @@
               <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 5h16v11H7l-3 3V5Z"/><path d="M8 9h8M8 12h5"/></svg>
               Teacher
             </button>
-            <button id="reset-results-button" class="button button-quiet button-reset" type="button">
+            <button id="reset-results-button" class="button button-quiet button-reset" type="button" disabled>
               <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.6"/><path d="M4 4v4.6h4.6"/></svg>
               Reset results
             </button>
           </div>
-          <button id="start-button" class="button button-primary" type="button">
+          <button id="start-button" class="button button-primary" type="button" disabled>
             <span>Start</span>
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>
           </button>

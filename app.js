@@ -15,6 +15,8 @@
     start: document.querySelector('#start-screen'), game: document.querySelector('#game-screen'), complete: document.querySelector('#complete-screen'),
     listGrid: document.querySelector('#list-grid'), startButton: document.querySelector('#start-button'), startStatus: document.querySelector('#start-status'),
     resetResults: document.querySelector('#reset-results-button'),
+    studentSelect: document.querySelector('#student-select'), studentName: document.querySelector('#student-name-input'), addStudent: document.querySelector('#add-student-button'),
+    studentTitle: document.querySelector('#student-title'), continueSession: document.querySelector('#continue-session-button'), continueDetail: document.querySelector('#continue-session-detail'),
     gameTitle: document.querySelector('#game-title'), wordCounter: document.querySelector('#word-counter'), letterRow: document.querySelector('#letter-row'),
     revealPrompt: document.querySelector('#reveal-prompt'), revealedWord: document.querySelector('#revealed-word'), readingFeedback: document.querySelector('#reading-feedback'), soundOut: document.querySelector('#sound-out-button'),
     read: document.querySelector('#read-button'), next: document.querySelector('#next-button'), back: document.querySelector('#back-button'), home: document.querySelector('#home-button'),
@@ -30,7 +32,9 @@
   let state = loadState();
   let selectedListId = state.selectedListId || 'list-1';
   let selectedOrder = state.order || 'in-order';
-  let session = validSession(state.session) ? state.session : null;
+  let session = null;
+  loadActiveStudentData();
+  if (session && !state.atHome) { selectedListId = session.listId; selectedOrder = session.order; }
   let listened = [false, false, false];
   let readRevealed = false;
   let audioReady = false;
@@ -38,8 +42,21 @@
   let recognitionGeneration = 0;
   let activeRecognition = null;
 
+  function blankProgress() {
+    return Object.fromEntries(WORD_LISTS.map((list) => [list.id, []]));
+  }
+
+  function normaliseProgress(source) {
+    const progress = blankProgress();
+    WORD_LISTS.forEach((list) => {
+      const allowed = new Set(list.words);
+      progress[list.id] = [...new Set((source?.[list.id] || []).filter((word) => allowed.has(word)))];
+    });
+    return progress;
+  }
+
   function defaultState() {
-    return { selectedListId: 'list-1', order: 'in-order', progress: Object.fromEntries(WORD_LISTS.map((list) => [list.id, []])), session: null, volume: 0.9, gap: 300, effects: true };
+    return { selectedListId: 'list-1', order: 'in-order', progress: blankProgress(), session: null, students: [], activeStudentId: null, atHome: true, volume: 0.9, gap: 300, effects: true };
   }
 
   function loadState() {
@@ -47,14 +64,49 @@
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
       if (!saved || typeof saved !== 'object') return fallback;
-      return { ...fallback, ...saved, progress: { ...fallback.progress, ...(saved.progress || {}) } };
+      const legacyProgress = normaliseProgress(saved.progress);
+      const students = Array.isArray(saved.students) ? saved.students.filter((student) => student && typeof student.id === 'string' && typeof student.name === 'string').map((student) => ({
+        id: student.id,
+        name: student.name.trim().slice(0, 30),
+        progress: normaliseProgress(student.progress),
+        session: validSession(student.session) ? student.session : null,
+      })).filter((student) => student.name) : [];
+      const hasLegacyWork = Object.values(legacyProgress).some((words) => words.length) || validSession(saved.session);
+      if (!students.length && hasLegacyWork) {
+        students.push({ id: 'student-migrated', name: 'Student 1', progress: legacyProgress, session: validSession(saved.session) ? saved.session : null });
+      }
+      const requestedStudentId = typeof saved.activeStudentId === 'string' ? saved.activeStudentId : null;
+      const activeStudentId = students.some((student) => student.id === requestedStudentId) ? requestedStudentId : (students.length === 1 ? students[0].id : null);
+      return {
+        ...fallback,
+        ...saved,
+        progress: blankProgress(),
+        students,
+        activeStudentId,
+        atHome: typeof saved.atHome === 'boolean' ? saved.atHome : !validSession(saved.session),
+      };
     } catch (_) { return fallback; }
+  }
+
+  function activeStudent() {
+    return state.students.find((student) => student.id === state.activeStudentId) || null;
+  }
+
+  function loadActiveStudentData() {
+    const student = activeStudent();
+    state.progress = student ? normaliseProgress(student.progress) : blankProgress();
+    session = student && validSession(student.session) ? student.session : null;
   }
 
   function saveState() {
     state.selectedListId = selectedListId;
     state.order = selectedOrder;
-    state.session = session;
+    const student = activeStudent();
+    if (student) {
+      student.progress = normaliseProgress(state.progress);
+      student.session = validSession(session) ? session : null;
+    }
+    state.session = null;
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
     catch (_) { setStatus(elements.gameStatus, 'Progress cannot be saved in this browser.', true); }
   }
@@ -94,6 +146,78 @@
     });
   }
 
+  function renderStudentControls() {
+    const selectedId = state.activeStudentId || '';
+    elements.studentSelect.replaceChildren();
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = 'Choose a student';
+    elements.studentSelect.append(placeholder);
+    state.students.forEach((student) => {
+      const option = document.createElement('option');
+      option.value = student.id;
+      option.textContent = student.name;
+      elements.studentSelect.append(option);
+    });
+    elements.studentSelect.value = selectedId;
+
+    const student = activeStudent();
+    elements.studentTitle.textContent = student ? `Reading as ${student.name}` : 'Choose a saved name or add a new one';
+    elements.startButton.disabled = !student;
+    elements.resetResults.disabled = !student;
+    const canContinue = Boolean(student && validSession(session));
+    elements.continueSession.hidden = !canContinue;
+    if (canContinue) {
+      const list = WORD_LISTS.find((item) => item.id === session.listId);
+      elements.continueDetail.textContent = `${student.name} · ${list.title} · ${session.index + 1} / 8`;
+    } else {
+      elements.continueDetail.textContent = '';
+    }
+  }
+
+  function selectStudent(studentId, { announce = true } = {}) {
+    saveState();
+    audioLoadGeneration += 1;
+    audioReady = false;
+    audio.cancel();
+    stopRecognition();
+    state.activeStudentId = state.students.some((student) => student.id === studentId) ? studentId : null;
+    loadActiveStudentData();
+    state.atHome = true;
+    if (session) {
+      selectedListId = session.listId;
+      selectedOrder = session.order;
+    }
+    saveState();
+    renderStudentControls();
+    renderListGrid();
+    setOrder(selectedOrder);
+    if (announce) {
+      const student = activeStudent();
+      setStatus(elements.startStatus, student ? `Welcome back, ${student.name}.` : 'Choose or add a student to begin.');
+    }
+  }
+
+  function addStudent() {
+    const name = elements.studentName.value.trim().replace(/\s+/g, ' ').slice(0, 30);
+    if (!name) {
+      setStatus(elements.startStatus, 'Enter the student’s name first.', true);
+      elements.studentName.focus();
+      return;
+    }
+    const existing = state.students.find((student) => student.name.toLocaleLowerCase() === name.toLocaleLowerCase());
+    if (existing) {
+      elements.studentName.value = '';
+      selectStudent(existing.id);
+      return;
+    }
+    const id = `student-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    state.students.push({ id, name, progress: blankProgress(), session: null });
+    elements.studentName.value = '';
+    selectStudent(id, { announce: false });
+    setStatus(elements.startStatus, `${name} added. Choose a list and start reading.`);
+  }
+
   function setOrder(order) {
     selectedOrder = order;
     document.querySelectorAll('.order-option').forEach((button) => { const active = button.dataset.order === order; button.classList.toggle('active', active); button.setAttribute('aria-pressed', String(active)); });
@@ -101,11 +225,16 @@
   }
 
   function resetResults() {
-    if (!window.confirm('Reset progress for all six lists?')) return;
+    const student = activeStudent();
+    if (!student) return;
+    if (!window.confirm(`Reset all results for ${student.name}?`)) return;
     WORD_LISTS.forEach((list) => { state.progress[list.id] = []; });
+    session = null;
+    state.atHome = true;
     saveState();
     renderListGrid();
-    setStatus(elements.startStatus, 'Results reset. All lists are ready to read again.');
+    renderStudentControls();
+    setStatus(elements.startStatus, `${student.name}’s results were reset. All lists are ready to read again.`);
   }
 
   function shuffle(items) {
@@ -115,6 +244,13 @@
   }
 
   async function startNewSession({ resetProgress = false } = {}) {
+    const student = activeStudent();
+    if (!student) {
+      setStatus(elements.startStatus, 'Choose or add a student before starting.', true);
+      elements.studentName.focus();
+      return;
+    }
+    if (session && !window.confirm(`Start a new reading session for ${student.name}? The saved place in ${currentList().title} will be replaced.`)) return;
     const list = WORD_LISTS.find((item) => item.id === selectedListId) || WORD_LISTS[0];
     if (resetProgress) state.progress[list.id] = [];
     try { await audio.unlock(); }
@@ -124,9 +260,28 @@
     try {
       await loadListAudio(list);
       session = { listId: list.id, order: selectedOrder, sequence: selectedOrder === 'mix' ? shuffle(list.words) : [...list.words], index: 0 };
+      state.atHome = false;
       saveState(); showGame();
     } catch (error) { setStatus(elements.startStatus, `${error.message} Check the supplied audio files and try again.`, true); }
-    finally { elements.startButton.disabled = false; }
+    finally { renderStudentControls(); }
+  }
+
+  async function continueSavedSession() {
+    const student = activeStudent();
+    if (!student || !validSession(session)) return;
+    elements.continueSession.disabled = true;
+    setStatus(elements.startStatus, `Preparing ${student.name}’s saved lesson…`);
+    try {
+      await audio.unlock();
+      await loadListAudio(currentList());
+      state.atHome = false;
+      saveState();
+      showGame();
+    } catch (error) {
+      setStatus(elements.startStatus, `${error.message} Check the supplied audio files and try again.`, true);
+    } finally {
+      elements.continueSession.disabled = false;
+    }
   }
 
   function keysForList(list) { return [...new Set(list.words.flatMap((word) => [...word].map((letter) => LETTER_TO_AUDIO_KEY[letter])))]; }
@@ -349,7 +504,14 @@
   function previousWord() { if (!session || session.index === 0) return; session.index -= 1; saveState(); renderWord(); }
 
   function goHome() {
-    audioLoadGeneration += 1; audioReady = false; session = null; saveState(); renderListGrid(); setStatus(elements.startStatus, ''); showScreen(elements.start);
+    audioLoadGeneration += 1;
+    audioReady = false;
+    state.atHome = true;
+    saveState();
+    renderStudentControls();
+    renderListGrid();
+    setStatus(elements.startStatus, session ? 'Your place is saved. Choose Continue when you are ready.' : '');
+    showScreen(elements.start);
   }
 
   function handleAudioError(error) {
@@ -401,6 +563,10 @@
   function bindEvents() {
     document.querySelectorAll('.order-option').forEach((button) => button.addEventListener('click', () => setOrder(button.dataset.order)));
     elements.startButton.addEventListener('click', () => startNewSession()); elements.home.addEventListener('click', goHome); elements.soundOut.addEventListener('click', soundItOut);
+    elements.studentSelect.addEventListener('change', () => selectStudent(elements.studentSelect.value));
+    elements.addStudent.addEventListener('click', addStudent);
+    elements.studentName.addEventListener('keydown', (event) => { if (event.key === 'Enter') { event.preventDefault(); addStudent(); } });
+    elements.continueSession.addEventListener('click', continueSavedSession);
     elements.resetResults.addEventListener('click', resetResults);
     elements.read.addEventListener('click', startReadingCheck); elements.next.addEventListener('click', nextWord); elements.back.addEventListener('click', previousWord);
     elements.retryAudio.addEventListener('click', retryAudio); elements.fullscreen.addEventListener('click', toggleFullscreen);
@@ -427,8 +593,12 @@
     state.volume = Number.isFinite(Number(state.volume)) ? Math.max(0, Math.min(1, Number(state.volume))) : 0.9;
     state.gap = Number.isFinite(Number(state.gap)) ? Math.max(0, Math.min(2000, Number(state.gap))) : 300;
     state.effects = state.effects !== false;
-    renderListGrid(); setOrder(selectedOrder); renderTeacherSounds(); initialiseSettings(); bindEvents();
-    if (session) { selectedListId = session.listId; selectedOrder = session.order; showGame(); } else showScreen(elements.start);
+    renderStudentControls(); renderListGrid(); setOrder(selectedOrder); renderTeacherSounds(); initialiseSettings(); bindEvents();
+    if (session && !state.atHome) { selectedListId = session.listId; selectedOrder = session.order; showGame(); }
+    else {
+      showScreen(elements.start);
+      if (!activeStudent()) setStatus(elements.startStatus, 'Add a student name to begin.');
+    }
     window.__AUTUMN_SOUND_GARDEN__ = { getState: () => ({ state: JSON.parse(JSON.stringify(state)), session: session ? { ...session } : null, listened: [...listened], readRevealed, audioReady }), lists: WORD_LISTS };
   }
 
